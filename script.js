@@ -21,6 +21,9 @@ d3.csv('data/scatterplot.csv', (d) => {
     return d;
   }).then((data) => {
 
+    // print at least 10 lines of data to console
+    console.log(data)
+    
     // create scales
     const xScale = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.x)])
