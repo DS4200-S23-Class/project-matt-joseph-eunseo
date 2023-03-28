@@ -1,3 +1,4 @@
+
 // set up constants
 const width = 1000;
 const height = 600;
@@ -10,7 +11,6 @@ const radius = 5;
 const svgScatter = d3.select('#scatterplot')
   .attr('width', width)
   .attr('height', height);
-
 
 // load data and draw scatterplot
 d3.csv('data/scatterplot.csv', (d) => {
@@ -70,6 +70,7 @@ d3.csv('data/scatterplot.csv', (d) => {
           .attr('stroke', 'black');
         
       })
+  
       .on('mouseout', (event, d) => {
         d3.select(event.currentTarget)
           .attr('stroke', 'white');
@@ -114,6 +115,7 @@ d3.csv('data/scatterplot.csv', (d) => {
       .attr('text-anchor', 'middle')
       .text('EGFR Expression (log(counts))');
   });
+
 
 // create SVG element
 const svgBox = d3.select('#boxplot')

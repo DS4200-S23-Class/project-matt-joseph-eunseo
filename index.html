@@ -59,9 +59,27 @@
   </div> 
   <div>
     <h2>Visualization</h2>
-    <svg id="scatterplot"></svg>
-    <div id="selected-point"></div>
-    <svg id="boxplot"></svg>
+      <div id="plot-wrapper" style="position: relative;">
+        <svg id="scatterplot"></svg>
+        <div id="selected-point"></div>
+          <select id="select-y-var" style="position: absolute; top:0px; left:0px;">
+            <option value="Gene1" selected>Gene1</option>
+            <option value="Gene12">Gene12</option>
+            <option value="Gene13">Gene13</option>
+            <option value="Gene14">Gene14</option>
+            <option value="Gene15">Gene15</option>
+          </select>
+          <select id="select-x-var" style="position: absolute; bottom:0px; left: 900px;">
+           <option value="Gene1" selected>Gene1</option>
+            <option value="Gene2">Gene2</option>
+            <option value="Gene3">Gene3</option>
+            <option value="Gene4">Gene4</option>
+            <option value="Gene5">Gene5</option>
+            <option value="Gene6">Gene6</option>
+            <option value="Gene7">Gene7</option>
+          </select>
+        </div>
+      <svg id="boxplot"></svg>
   </div>
   <div>
     <h2>Acknowledgements</h2>
