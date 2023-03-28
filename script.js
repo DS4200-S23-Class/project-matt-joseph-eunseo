@@ -1,3 +1,8 @@
+const url = 'https://toil-flask.onrender.com/genes'
+
+d3.json(url, (data) => {
+	console.log(data)
+})
 
 // set up constants
 const width = 1000;
