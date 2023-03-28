@@ -1,5 +1,7 @@
 const url = 'https://toil-flask.onrender.com/genes'
 
+console.log('url')
+
 d3.json(url, (data) => {
 	console.log(data)
 })
