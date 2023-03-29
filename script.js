@@ -1,44 +1,82 @@
-const url = 'https://toil-flask.onrender.com/genes'
+// toggle between tabs
+function openTab(evt, tabName) {
+  // Declare all variables
+  let i, tabcontent, tablinks;
 
-console.log('url')
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
 
-d3.json(url, (data) => {
-	console.log(data)
-})
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
 
-// set up constants
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// store options from csv file
+const diseases = ['Uveal Melanoma', 'Uterine Corpus Endometrioid Carcinoma', 'Uterine Carcinosarcoma', 'Thyroid Carcinoma', 'Thymoma', 'Testicular Germ Cell Tumor', 'Stomach Adenocarcinoma', 'Skin Cutaneous Melanoma', 'Sarcoma', 'Rectum Adenocarcinoma', 'Prostate Adenocarcinoma', 'Pheochromocytoma & Paraganglioma', 'Pancreatic Adenocarcinoma', 'Ovarian Serous Cystadenocarcinoma', 'Mesothelioma', 'Lung Squamous Cell Carcinoma', 'Lung Adenocarcinoma', 'Liver Hepatocellular Carcinoma', 'Kidney Papillary Cell Carcinoma', 'Kidney Clear Cell Carcinoma', 'Kidney Chromophobe', 'Head & Neck Squamous Cell Carcinoma', 'Glioblastoma Multiforme', 'Esophageal Carcinoma', 'Diffuse Large B-Cell Lymphoma', 'Colon Adenocarcinoma', 'Cholangiocarcinoma', 'Cervical & Endocervical Cancer', 'Breast Invasive Carcinoma', 'Brain Lower Grade Glioma', 'Bladder Urothelial Carcinoma', 'Adrenocortical Cancer', 'Acute Myeloid Leukemia'];
+const tissues = ['Fallopian Tube', 'Kidney', 'Cervix', 'Bladder', 'Prostate', 'Minor Salivary Gland', 'Small Intestine', 'Adrenal Gland', 'Breast', 'Spleen', 'Liver', 'Adipose', 'Stomach', 'Pancreas', 'Ovary', 'Colon', 'Vagina', 'Heart', 'Testis', 'Pituitary', 'Whole Blood', 'Brain', 'Esophagus', 'Nerve', 'Skin', 'Lung', 'Muscle', 'Thyroid', 'Uterus', 'Artery' ];
+
+// populate select options
+const selectDisease = document.getElementById('disease');
+diseases.forEach((disease) => {
+  const option = new Option(disease);
+  if (disease === 'Breast Invasive Carcinoma') {
+    option.setAttribute('selected', true);
+  }
+  selectDisease.add(option);
+});
+
+// set up constants for graphs
 const width = 1000;
 const height = 600;
-const margin = { top: 50, right: 50, bottom: 50, left: 100 };
+const margin = { top: 50, right: 50, bottom: 50, left: 150 };
 const innerWidth = width - margin.left - margin.right;
 const innerHeight = height - margin.top - margin.bottom;
 const radius = 5;
 
-// create SVG element
-const svgScatter = d3.select('#scatterplot')
-  .attr('width', width)
-  .attr('height', height);
-
-// load data and draw scatterplot
-d3.csv('data/scatterplot.csv', (d) => {
+// monitor form for correlation plot
+const correlationForm = document.getElementById("correlationForm");
+correlationForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const gene1 = document.getElementById("gene1").value;
+  const gene2 = document.getElementById("gene2").value;
+  
+  // load data and draw scatterplot
+  d3.csv('data/data.csv', (d) => {
     // coerce data to numbers
-    d.x = +d.ERBB2;
-    d.y = +d.EGFR;
+    d.x = +d[`${gene1}`];
+    d.y = +d[`${gene2}`];
     d.selected = false;
     return d;
   }).then((data) => {
-
+  
     // print at least 10 lines of data to console
-    console.log(data)
+    console.log(data);
+    
+    // create SVG element
+    const svgScatter = d3.select('#scatterplot')
+      .attr('width', width)
+      .attr('height', height);
 
+    // remove previous SVG element
+    svgScatter.selectAll("*").remove();
+    
     // create scales
     const xScale = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d.x)])
-    .range([0, innerWidth]);
+      .domain([0, d3.max(data, d => d.x)])
+      .range([0, innerWidth]);
 
     const yScale = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d.y)])
-    .range([innerHeight, 0]);
+      .domain([0, d3.max(data, d => d.y)])
+      .range([innerHeight, 0]);
 
     // create axis
     const xAxis = d3.axisBottom(xScale);
@@ -46,12 +84,12 @@ d3.csv('data/scatterplot.csv', (d) => {
 
     // add axis to SVG
     svgScatter.append('g')
-    .attr('transform', `translate(${margin.left}, ${innerHeight + margin.top})`)
-    .call(xAxis);
+      .attr('transform', `translate(${margin.left}, ${innerHeight + margin.top})`)
+      .call(xAxis);
 
     svgScatter.append('g')
-    .attr('transform', `translate(${margin.left}, ${margin.top})`)
-    .call(yAxis);
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      .call(yAxis);
 
     // add points to scatterplot
     svgScatter.selectAll('circle')
@@ -77,7 +115,6 @@ d3.csv('data/scatterplot.csv', (d) => {
           .attr('stroke', 'black');
         
       })
-  
       .on('mouseout', (event, d) => {
         d3.select(event.currentTarget)
           .attr('stroke', 'white');
@@ -88,7 +125,7 @@ d3.csv('data/scatterplot.csv', (d) => {
           point.attr('fill', 'blue');
           d.selected = true;
           d3.select('#selected-point')
-            .text(`Selected point: ${d.Sample}, ERBB2 Expression: ${d.x}, EGFR Expression: ${d.y}`);
+            .text(`Selected point: ${d.Sample}, ${gene1} Expression: ${d.x}, ${gene2} Expression: ${d.y}`);
         } else {
           point.attr('fill', d => {
             if (d.Study === 'GTEX') {
@@ -96,82 +133,141 @@ d3.csv('data/scatterplot.csv', (d) => {
             } else if (d.Study === 'TARGET') {
               return 'orange';
             } else {
-              return 'red'
+              return 'red';
             }
           });
           d.selected = false;
         }
       });
+
     // add title
     svgScatter.append('text')
       .attr('x', width / 2)
       .attr('y', margin.top / 2)
       .attr('text-anchor', 'middle')
-      .text('EGFR and ERBB2 Expression Correlation');
+      .text(`${gene1} and ${gene2} Expression Correlation`);
     // add x axis title
     svgScatter.append('text')
       .attr('x', margin.left + innerWidth / 2)
       .attr('y', height - 10 )
       .attr('text-anchor', 'middle')
-      .text('ERBB2 Expression (log(counts))');
+      .text(`${gene1} Expression (log(counts))`);
     // add y axis title
     svgScatter.append('text')
       .attr('transform', 'rotate(-90)')
       .attr('x', -margin.top - innerHeight / 2)
       .attr('y', margin.left / 2)
       .attr('text-anchor', 'middle')
-      .text('EGFR Expression (log(counts))');
+      .text(`${gene2} Expression (log(counts))`);
   });
+});
 
+// monitor form for overexpression plot
+const overexpressionForm = document.getElementById("overexpressionForm");
+overexpressionForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const gene = document.getElementById("gene").value;
+  const disease = document.getElementById("disease").value;
 
-// create SVG element
-const svgBox = d3.select('#boxplot')
-  .attr('width', width)
-  .attr('height', height);
-
-// load data and draw scatterplot
-d3.csv('data/boxplot.csv', (d) => {
+  // load data and draw scatterplot
+  d3.csv('data/data.csv', (d) => {
     // coerce data to numbers
-    d.x = +d.Expression;
-    d.y = d["Disease/Tissue"];
+    d.x = +d[`${gene}`];
+    d.y = d['Disease/Tissue'];
     return d;
   }).then((data) => {
 
+    // filter data only for disease selected
+    const diseaseTissue = disease.concat(tissues);
+    data = data.filter((d) => diseaseTissue.includes(d.y));
+
+    // group data by Disease/Tissue and calculate maximum 
+    const groupedData = d3.group(data, d => d.y);
+    console.log(groupedData);
+    const averages = Array.from(groupedData, ([key, value]) => {
+      return {
+        'y': key,
+        'x': d3.max(value, d => d.x),
+        'selected': false
+      };
+    });
+    averages.pop();
+
+    // create SVG element
+    const svgBar = d3.select('#barplot')
+      .attr('width', width)
+      .attr('height', height);
+    
+    // remove previous SVG element
+    svgBar.selectAll("*").remove();
+    
     // create scales
     const xScale = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d.x)])
-    .range([0, innerWidth]);
+      .domain([0, d3.max(averages, d => d.x)])
+      .range([0, innerWidth]);
 
     const yScale = d3.scaleBand()
-    .domain(data.map(d => d.y))
-    .range([innerHeight, 0]);
+      .domain(averages.map(d => d.y))
+      .range([innerHeight, 0]);
 
-    // create axis
+    // create axes
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale);
 
-    // add axis to SVG
-    svgBox.append('g')
-    .attr('transform', `translate(${margin.left}, ${innerHeight + margin.top})`)
-    .call(xAxis);
+    // add axes to SVG
+    svgBar.append('g')
+      .attr('transform', `translate(${margin.left}, ${innerHeight + margin.top})`)
+      .call(xAxis);
 
-    svgBox.append('g')
-    .attr('transform', `translate(${margin.left}, ${margin.top})`)
-    .call(yAxis);
+    svgBar.append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      .call(yAxis);
+    
+    // add bars to SVG
+    svgBar.selectAll('rect')
+      .data(averages)
+      .join('rect')
+      .attr('x', margin.left)
+      .attr('y', d => yScale(d.y) + margin.top)
+      .attr('width', d => xScale(d.x))
+      .attr('height', yScale.bandwidth())
+      .attr('fill', d => d.y === disease ? 'red' : 'green')
+      .attr('stroke', '#333')
+      .attr('stroke-width', 1)
+      .attr('opacity', 1)
+      .on('mouseover', (event, d) => {
+        d3.select(event.currentTarget)
+          .attr('opacity', 0.7);
+      })
+      .on('mouseout', (event, d) => {
+        d3.select(event.currentTarget)
+          .attr('opacity', 1);
+      })
+      .on('click', (event, d) => {
+        const bar = d3.select(event.currentTarget);
+        if (!d.selected) {
+          bar.attr('fill', 'blue');
+          d.selected = true;
+          d3.select('#selected-bar')
+            .text(`Selected bar: ${d.y}, ${gene} max expression: ${d.x}`);
+        } else {
+          bar.attr('fill', d => d.y === disease ? 'red' : 'green');
+          d.selected = false;
+        }
+      });
 
     // add title
-    svgBox.append('text')
+    svgBar.append('text')
       .attr('x', width / 2)
       .attr('y', margin.top / 2)
       .attr('text-anchor', 'middle')
-      .text('ERBB2 Expression Across Normal and Tumor Tissue Types');
+      .text(`${gene} Expression Across Normal and Tumor Tissue Types`);
+    
     // add x axis title
-    svgBox.append('text')
+    svgBar.append('text')
       .attr('x', margin.left + innerWidth / 2)
       .attr('y', height - 10 )
       .attr('text-anchor', 'middle')
-      .text('ERBB2 Expression (log(counts))');
-
-    // TODO: Calculate summary statistics to create boxplot and
-    // add boxplots to figure
-  })
+      .text(`${gene} Expression (log(counts))`);
+  });
+});

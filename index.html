@@ -9,79 +9,55 @@
 
 
 <body>
-  <h1>Gene Expression</h1>
-  <div>
+  <h1>Gene Expression Visualization Tool</h1>
+  <!-- tabs -->
+  <div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'tab1')">About</button>
+    <button class="tablinks" onclick="openTab(event, 'tab2')">Correlation Analysis</button>
+    <button class="tablinks" onclick="openTab(event, 'tab3')">Overexpression Analysis</button>
+  </div>
+
+  <!-- About tab -->
+  <div id="tab1" class="tabcontent">
     <h2>Motivation</h2>
-    <ul>
-      <li>
-        One use case for a visualization tool related to cancer data is to visualize gene expression data across normal and cancerous tissue.
-        The end-user would be a scientist aiming to identify genes that are upregulated in cancerous tissue for potential drug targeting.
-        A scientist may use this tool for multiple purposes. They may already have a gene in mind and want to observe the distribution of
-        that gene's expression levels across multiple normal tissues and cancer indications. This could be visualized with multiple boxplots
-        representing gene expression distributions for the gene of interest, with each boxplot representing a specific tissue or cancer indication.
-        This would allow them to analyze whether or not the gene may serve as a good target. For example, if the gene of interest is overexpressed in
-        a specific cancerous tissue and less expressed in normal tissue, it may serve as a good target for a therapeutic drug that would then be able
-        to target only tissue that overexpresses the gene of interest. 
-        
-        The scientist may also not have a specific gene in mind and could use the visualization tool for more exploratory purposes.
-        They may filter which genes they would like to see based on criteria they have and then select a cancer indication they are interested in.
-        The resulting visualization would show them across all genes that matched filter criteria, which genes are most overexpressed in that cancer type
-        compared to normal tissue. This could be represented with a line plot that plots the ratio of average cancer expression to normal expression on one
-        axis against the ratio of prevalence of cancer overexpression to normal expression. Thus, from the visualization, the scientist would be able to isolate
-        only genes with the highest average cancer overexpression as well as highest prevalence of cancer overexpression. This would give them a solid
-        foundation for further research into best gene targets to utilize for therapeutic drug synthesis against their cancer type. 
-      </li> 
-    </ul>
-  </div>
-  <div>
+    <p>
+      One use case for a visualization tool related to cancer data is to visualize gene expression data across normal and cancerous tissue.
+      The end-user would be a scientist aiming to identify genes that are upregulated in cancerous tissue for potential drug targeting.
+      A scientist may use this tool for multiple purposes. They may already have a gene in mind and want to observe the distribution of
+      that gene's expression levels across multiple normal tissues and cancer indications. This could be visualized with multiple boxplots
+      representing gene expression distributions for the gene of interest, with each boxplot representing a specific tissue or cancer indication.
+      This would allow them to analyze whether or not the gene may serve as a good target. For example, if the gene of interest is overexpressed in
+      a specific cancerous tissue and less expressed in normal tissue, it may serve as a good target for a therapeutic drug that would then be able
+      to target only tissue that overexpresses the gene of interest. 
+      
+      The scientist may also not have a specific gene in mind and could use the visualization tool for more exploratory purposes.
+      They may filter which genes they would like to see based on criteria they have and then select a cancer indication they are interested in.
+      The resulting visualization would show them across all genes that matched filter criteria, which genes are most overexpressed in that cancer type
+      compared to normal tissue. This could be represented with a line plot that plots the ratio of average cancer expression to normal expression on one
+      axis against the ratio of prevalence of cancer overexpression to normal expression. Thus, from the visualization, the scientist would be able to isolate
+      only genes with the highest average cancer overexpression as well as highest prevalence of cancer overexpression. This would give them a solid
+      foundation for further research into best gene targets to utilize for therapeutic drug synthesis against their cancer type. 
+    </p>
     <h2>Background</h2>
-    <ul>
-      <li> 
-        This data, the TOIL dataset, is a project conducted by UCSC that recomputes expression levels across samples from both cancer and 
-        normal tissues. The original studies (TCGA and TARGET for tumor tissue and GTEx for normal tissue) computed their expression values
-        through different processing pipelines, so this recomputing project was necessary to be able to compare values across studies.
-        There are multiple datasets within TOIL, but the primary ones we will use are "RSEM norm_count", which contains the actual gene expression
-        values, and "TCGA GTEX main categories" and "TCGA TARGET GTEX selected phenotypes" which contain metadata regarding each sample. 
-        
-        The biggest bias consideration for the data is ensuring the expression results were harmonized correctly between the different studies.
-        If this was done incorrectly, it would be useless to compare results between the different studies. However, UCSC Toil went to great
-        lengths to create a pipeline that ensured all samples were recomputed in a single, reliable pipeline (at a cost of $1.30 per sample).
-        Other than this, there are no other huge considerations from the data as all samples were collected by consenting patients, and the data
-        cannot be traced back to the identity of the actual individuals that gave samples. 
-        
-        There was not much cleaning or processing that had to be done since the data is already well organized. The one big thing we did was aggregate
-        the different datasets (expression levels and metadata of samples) so that they are all accessible together. This was done in Python using Pandas
-        DataFrames and concatenating the DataFrames together. 
-        
-        <a href="https://xenabrowser.net/datapages/?hub=https://toil.xenahubs.net:443">Raw Data</a>
-      </li> 
-    </ul>
-  </div> 
-  <div>
-    <h2>Visualization</h2>
-      <div id="plot-wrapper" style="position: relative;">
-        <svg id="scatterplot"></svg>
-        <div id="selected-point"></div>
-          <select id="select-y-var" style="position: absolute; top:0px; left:0px;">
-            <option value="Gene1" selected>Gene1</option>
-            <option value="Gene12">Gene12</option>
-            <option value="Gene13">Gene13</option>
-            <option value="Gene14">Gene14</option>
-            <option value="Gene15">Gene15</option>
-          </select>
-          <select id="select-x-var" style="position: absolute; bottom:0px; left: 900px;">
-           <option value="Gene1" selected>Gene1</option>
-            <option value="Gene2">Gene2</option>
-            <option value="Gene3">Gene3</option>
-            <option value="Gene4">Gene4</option>
-            <option value="Gene5">Gene5</option>
-            <option value="Gene6">Gene6</option>
-            <option value="Gene7">Gene7</option>
-          </select>
-        </div>
-      <svg id="boxplot"></svg>
-  </div>
-  <div>
+    <p>
+      This data, the TOIL dataset, is a project conducted by UCSC that recomputes expression levels across samples from both cancer and 
+      normal tissues. The original studies (TCGA and TARGET for tumor tissue and GTEx for normal tissue) computed their expression values
+      through different processing pipelines, so this recomputing project was necessary to be able to compare values across studies.
+      There are multiple datasets within TOIL, but the primary ones we will use are "RSEM norm_count", which contains the actual gene expression
+      values, and "TCGA GTEX main categories" and "TCGA TARGET GTEX selected phenotypes" which contain metadata regarding each sample. 
+      
+      The biggest bias consideration for the data is ensuring the expression results were harmonized correctly between the different studies.
+      If this was done incorrectly, it would be useless to compare results between the different studies. However, UCSC Toil went to great
+      lengths to create a pipeline that ensured all samples were recomputed in a single, reliable pipeline (at a cost of $1.30 per sample).
+      Other than this, there are no other huge considerations from the data as all samples were collected by consenting patients, and the data
+      cannot be traced back to the identity of the actual individuals that gave samples. 
+      
+      There was not much cleaning or processing that had to be done since the data is already well organized. The one big thing we did was aggregate
+      the different datasets (expression levels and metadata of samples) so that they are all accessible together. This was done in Python using Pandas
+      DataFrames and concatenating the DataFrames together. 
+      <br>
+      <a href="https://xenabrowser.net/datapages/?hub=https://toil.xenahubs.net:443">Raw Data</a>
+    </p>
     <h2>Acknowledgements</h2>
     <ul>
       <li>
@@ -96,7 +72,76 @@
       <li>
         <a href="https://medium.com/codex/an-interactive-scatter-plot-e5a01064b17">Related Publication - Interactive Visual Analysis of mRNA</a>
       </li>
+      <li>
+        <a href="https://www.w3schools.com/howto/howto_js_tabs.asp">Tabs in HTML</a>
+      </li>
     </ul>
+  </div> 
+  <!-- Correlation tab -->
+  <div id="tab2" class="tabcontent">
+    <div id="plot-wrapper" style="position: relative;">
+      <form id="correlationForm">
+        <label for="gene1">Gene 1: </label>
+        <select name="gene1" id="gene1">
+          <option value="TNF">TNF</option>
+          <option value="MS4A1">MS4A1</option>
+          <option value="EGFR">EGFR</option>
+          <option value="VEGFA">VEGFA</option>
+          <option value="ERBB2" selected>ERBB2</option>
+          <option value="CTLA4">CTLA4</option>
+          <option value="PDCD1">PDCD1</option>
+          <option value="IL6">IL6</option>
+          <option value="TNFSF11">TNFSF11</option>
+          <option value="PCSK9">PCSK9</option>
+        </select>
+        <br>
+        <label for="gene2">Gene 2:</label>
+        <select name="gene2" id="gene2" >
+          <option value="TNF">TNF</option>
+          <option value="MS4A1">MS4A1</option>
+          <option value="EGFR" selected>EGFR</option>
+          <option value="VEGFA">VEGFA</option>
+          <option value="ERBB2">ERBB2</option>
+          <option value="CTLA4">CTLA4</option>
+          <option value="PDCD1">PDCD1</option>
+          <option value="IL6">IL6</option>
+          <option value="TNFSF11">TNFSF11</option>
+          <option value="PCSK9">PCSK9</option>
+        </select>
+        <br>
+        <input type="submit">
+      </form>
+      <svg id="scatterplot"></svg>
+      <div id="selected-point"></div>
+    </div>
+  </div>
+  <!-- Overexpression tab -->
+  <div id="tab3" class="tabcontent">
+    <div id="plot-wrapper" style="position: relative;">
+      <form id="overexpressionForm">
+        <label for="gene">Gene:       </label>
+        <select name="gene" id="gene">
+          <option value="TNF">TNF</option>
+          <option value="MS4A1">MS4A1</option>
+          <option value="EGFR">EGFR</option>
+          <option value="VEGFA">VEGFA</option>
+          <option value="ERBB2">ERBB2</option>
+          <option value="CTLA4">CTLA4</option>
+          <option value="PDCD1">PDCD1</option>
+          <option value="IL6">IL6</option>
+          <option value="TNFSF11" selected>TNFSF11</option>
+          <option value="PCSK9">PCSK9</option>
+        </select>
+        <br>
+        <label for="disease">Disease: </label>
+        <select name="disease" id="disease">
+        </select>
+        <br>
+        <input type="submit">
+      </form>
+      <svg id="barplot"></svg>
+      <div id="selected-bar"></div>
+    </div>
   </div>
   <!-- Link to javascript file-->
   <script src="js/d3.v6.1.1/d3.min.js"></script>
