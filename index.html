@@ -79,7 +79,7 @@
   </div> 
   <!-- Correlation tab -->
   <div id="tab2" class="tabcontent">
-    <div id="plot-wrapper" style="position: relative;">
+    <div id="scatter-wrapper" style="position: relative;">
       <form id="correlationForm">
         <label for="gene1">Gene 1: </label>
         <select name="gene1" id="gene1">
@@ -118,29 +118,30 @@
   </div>
   <!-- Overexpression tab -->
   <div id="tab3" class="tabcontent">
-    <div id="plot-wrapper" style="position: relative;">
-      <form id="overexpressionForm">
-        <label for="gene">Gene:       </label>
-        <select name="gene" id="gene">
-          <option value="TNF">TNF</option>
-          <option value="MS4A1">MS4A1</option>
-          <option value="EGFR">EGFR</option>
-          <option value="VEGFA">VEGFA</option>
-          <option value="ERBB2">ERBB2</option>
-          <option value="CTLA4">CTLA4</option>
-          <option value="PDCD1">PDCD1</option>
-          <option value="IL6">IL6</option>
-          <option value="TNFSF11" selected>TNFSF11</option>
-          <option value="PCSK9">PCSK9</option>
-        </select>
-        <br>
-        <label for="disease">Disease: </label>
-        <select name="disease" id="disease">
-        </select>
-        <br>
-        <input type="submit">
-      </form>
+    <form id="overexpressionForm">
+      <label for="gene">Gene:       </label>
+      <select name="gene" id="gene">
+        <option value="TNF">TNF</option>
+        <option value="MS4A1">MS4A1</option>
+        <option value="EGFR">EGFR</option>
+        <option value="VEGFA">VEGFA</option>
+        <option value="ERBB2">ERBB2</option>
+        <option value="CTLA4">CTLA4</option>
+        <option value="PDCD1">PDCD1</option>
+        <option value="IL6">IL6</option>
+        <option value="TNFSF11" selected>TNFSF11</option>
+        <option value="PCSK9">PCSK9</option>
+      </select>
+      <br>
+      <label for="disease">Disease: </label>
+      <select name="disease" id="disease">
+      </select>
+      <br>
+      <input type="submit">
+    </form>
+    <div id="bar-wrapper" style="position: relative;">
       <svg id="barplot"></svg>
+      <div id="tooltip"></div>
       <div id="selected-bar"></div>
     </div>
   </div>

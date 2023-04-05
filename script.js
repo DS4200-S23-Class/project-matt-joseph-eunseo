@@ -106,7 +106,7 @@ correlationForm.addEventListener("submit", (e) => {
         } else if (d.Study === "TARGET") {
           return "orange";
         } else {
-          return "red"
+          return "red";
         }
       })
       .attr("stroke", "white")
@@ -183,14 +183,13 @@ overexpressionForm.addEventListener("submit", (e) => {
   const gene = document.getElementById("gene").value;
   const disease = document.getElementById("disease").value;
 
-  // load data and draw scatterplot
+  // load data and draw barplot
   d3.csv("data/data.csv", (d) => {
     // coerce data to numbers
     d.x = +d[`${gene}`];
     d.y = d["Disease/Tissue"];
     return d;
   }).then((data) => {
-
     // filter data only for disease selected
     const diseaseTissue = disease.concat(tissues);
     data = data.filter((d) => diseaseTissue.includes(d.y));
@@ -236,6 +235,16 @@ overexpressionForm.addEventListener("submit", (e) => {
     svgBar.append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .call(yAxis);
+  
+    const tooltip = d3.select("#tooltip")
+      .style("opacity", 0)
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "1px")
+      .style("border-radius", "5px")
+      .style("padding", "10px");
     
     // add bars to SVG
     svgBar.selectAll("rect")
@@ -253,10 +262,20 @@ overexpressionForm.addEventListener("submit", (e) => {
       .on("mouseover", (event, d) => {
         d3.select(event.currentTarget)
           .attr("opacity", 0.7);
+        tooltip
+          .html(`${d.y}, ${gene} max expression: ${d.x}`)
+          .style("opacity", 1);
+      })
+      .on("mousemove", (event, d) => {
+        tooltip
+          .style("left",`${event.x}px`)
+          .style("top",`${event.y - 200}px`);
       })
       .on("mouseout", (event, d) => {
         d3.select(event.currentTarget)
           .attr("opacity", 1);
+        tooltip
+          .style("opacity", 0);
       })
       .on("click", (event, d) => {
         // get data
@@ -285,7 +304,7 @@ overexpressionForm.addEventListener("submit", (e) => {
 
           // make black the points with tisue that match selected
           // tissue in bar plot
-          const selectedPoints = points.filter(d => d.tissue === tissue)
+          const selectedPoints = points.filter(d => d.tissue === tissue);
           selectedPoints.attr("fill", "black");
           
           // add text on scatterplot to indicate which tissue is highlighted
