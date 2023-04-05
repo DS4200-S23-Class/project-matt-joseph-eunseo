@@ -79,42 +79,52 @@
   </div> 
   <!-- Correlation tab -->
   <div id="tab2" class="tabcontent">
-    <div id="scatter-wrapper" style="position: relative;">
-      <form id="correlationForm">
-        <label for="gene1">Gene 1: </label>
-        <select name="gene1" id="gene1">
-          <option value="TNF">TNF</option>
-          <option value="MS4A1">MS4A1</option>
-          <option value="EGFR">EGFR</option>
-          <option value="VEGFA">VEGFA</option>
-          <option value="ERBB2" selected>ERBB2</option>
-          <option value="CTLA4">CTLA4</option>
-          <option value="PDCD1">PDCD1</option>
-          <option value="IL6">IL6</option>
-          <option value="TNFSF11">TNFSF11</option>
-          <option value="PCSK9">PCSK9</option>
-        </select>
-        <br>
-        <label for="gene2">Gene 2:</label>
-        <select name="gene2" id="gene2" >
-          <option value="TNF">TNF</option>
-          <option value="MS4A1">MS4A1</option>
-          <option value="EGFR" selected>EGFR</option>
-          <option value="VEGFA">VEGFA</option>
-          <option value="ERBB2">ERBB2</option>
-          <option value="CTLA4">CTLA4</option>
-          <option value="PDCD1">PDCD1</option>
-          <option value="IL6">IL6</option>
-          <option value="TNFSF11">TNFSF11</option>
-          <option value="PCSK9">PCSK9</option>
-        </select>
-        <br>
-        <input type="submit">
-      </form>
+    <form id="correlationForm">
+      <label for="gene1">Gene 1: </label>
+      <select name="gene1" id="gene1">
+        <option value="TNF">TNF</option>
+        <option value="MS4A1">MS4A1</option>
+        <option value="EGFR">EGFR</option>
+        <option value="VEGFA">VEGFA</option>
+        <option value="ERBB2" selected>ERBB2</option>
+        <option value="CTLA4">CTLA4</option>
+        <option value="PDCD1">PDCD1</option>
+        <option value="IL6">IL6</option>
+        <option value="TNFSF11">TNFSF11</option>
+        <option value="PCSK9">PCSK9</option>
+      </select>
+      <br>
+      <label for="gene2">Gene 2:</label>
+      <select name="gene2" id="gene2" >
+        <option value="TNF">TNF</option>
+        <option value="MS4A1">MS4A1</option>
+        <option value="EGFR" selected>EGFR</option>
+        <option value="VEGFA">VEGFA</option>
+        <option value="ERBB2">ERBB2</option>
+        <option value="CTLA4">CTLA4</option>
+        <option value="PDCD1">PDCD1</option>
+        <option value="IL6">IL6</option>
+        <option value="TNFSF11">TNFSF11</option>
+        <option value="PCSK9">PCSK9</option>
+      </select>
+      <br>
+      <input type="submit">
+    </form>
+    <div id="scatter-wrapper">
       <svg id="scatterplot"></svg>
+      <svg id="scatter-legend"></svg>
       <div id="selected-point"></div>
       <div id="highlighted-tissue"></div>
     </div>
+    <p>
+      This visualization allows the user to select two genes 
+      to see how correlated they are. When graphed, the visualization 
+      will show both of the expression data on a scatterplot. In 
+      the scatterplot, red points represent TCGA data, yellow is TARGET data, 
+      and green is GTEX data, showing the different data sources. 
+      When the user clicks on a point, it will show the sample ID it comes
+      from as well as exact expression counts for both genes.
+    </p>
   </div>
   <!-- Overexpression tab -->
   <div id="tab3" class="tabcontent">
@@ -139,11 +149,21 @@
       <br>
       <input type="submit">
     </form>
-    <div id="bar-wrapper" style="position: relative;">
+    <div id="bar-wrapper">
       <svg id="barplot"></svg>
+      <svg id="bar-legend"></svg>
       <div id="tooltip"></div>
-      <div id="selected-bar"></div>
     </div>
+    <p>
+      This visualization allows the user to select the gene they 
+      would like to look at, as well as the disease they want to 
+      look at expression for. The visualization will then show gene
+      expression counts for all normal tissue types (colored green) 
+      and compare it to the expression of the tumor tissue, highlighted in red.
+      Hovering over each tissue types shows the exact maximum expression of
+      that tissue. Clicking on any tissue will also highlight the correlating
+      points in the scatterplot with the same tissue type in black.
+    </p>
   </div>
   <!-- Link to javascript file-->
   <script src="js/d3.v6.1.1/d3.min.js"></script>

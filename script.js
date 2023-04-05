@@ -153,6 +153,40 @@ correlationForm.addEventListener("submit", (e) => {
         }
 
       });
+    
+    // create SVG element for legend
+    const svgLegend = d3.select("#scatter-legend")
+      .style("position", "absolute")
+      .attr("width", 100)
+      .attr("height", 100);
+
+    // define legend data
+    const legendData = [
+    { label: "GTEX", color: "green" },
+    { label: "TARGET", color: "orange" },
+    { label: "TCGA", color: "red" }
+    ];
+
+    // add legend items to legend SVG
+    const legendItems = svgLegend.selectAll(".legend-item")
+    .data(legendData)
+    .enter()
+    .append("g")
+    .attr("class", "legend-item")
+    .attr("transform", (d, i) => `translate(10, ${i * 20 + 10})`);
+
+    legendItems.append("circle")
+    .attr("cx", 5)
+    .attr("cy", 5)
+    .attr("r", 5)
+    .attr("fill", d => d.color);
+
+    legendItems.append("text")
+    .attr("x", 15)
+    .attr("y", 9)
+    .text(d => d.label);
+
+    svgLegend.attr("transform", `translate(${-innerWidth}, ${margin.top})`);
 
     // add title
     svgScatter.append("text")
@@ -245,6 +279,40 @@ overexpressionForm.addEventListener("submit", (e) => {
       .style("border-width", "1px")
       .style("border-radius", "5px")
       .style("padding", "10px");
+
+    // create SVG element for legend
+    const svgLegend = d3.select("#bar-legend")
+      .style("position", "absolute")
+      .attr("width", 300)
+      .attr("height", 100);
+
+    // define legend data
+    const legendData = [
+      { label: "Normal Tissue", color: "green" },
+      { label: "Tumor Tissue", color: "red" }
+    ];
+
+    // add legend items to legend SVG
+    const legendItems = svgLegend.selectAll(".legend-item")
+      .data(legendData)
+      .enter()
+      .append("g")
+      .attr("class", "legend-item")
+      .attr("transform", (d, i) => `translate(10, ${i * 20 + 10})`);
+
+    legendItems.append("rect")
+      .attr("x", 0)
+      .attr("y", (d, i) => i)
+      .attr("width", 20)
+      .attr("height", 20)
+      .attr("fill", d => d.color);
+
+    legendItems.append("text")
+      .attr("x", 30)
+      .attr("y", (d, i) => i + 15)
+      .text(d => d.label);
+
+    svgLegend.attr("transform", `translate(${-200}, ${margin.top})`);
     
     // add bars to SVG
     svgBar.selectAll("rect")
@@ -268,8 +336,8 @@ overexpressionForm.addEventListener("submit", (e) => {
       })
       .on("mousemove", (event, d) => {
         tooltip
-          .style("left",`${event.x}px`)
-          .style("top",`${event.y - 200}px`);
+          .style("left",`${event.x + 20}px`)
+          .style("top",`${event.y + 20}px`);
       })
       .on("mouseout", (event, d) => {
         d3.select(event.currentTarget)
@@ -299,8 +367,6 @@ overexpressionForm.addEventListener("submit", (e) => {
         if (!d.selected) {
           bar.attr("fill", "black");
           d.selected = true;
-          d3.select("#selected-bar")
-            .text(`Selected bar: ${tissue.toLowerCase()}, ${gene} max expression: ${d.x}`);
 
           // make black the points with tisue that match selected
           // tissue in bar plot
@@ -319,8 +385,6 @@ overexpressionForm.addEventListener("submit", (e) => {
 
           // remove text on scatterplot and barplot
           d3.select("#highlighted-tissue")
-            .text("");
-          d3.select("#selected-bar")
             .text("");
         }    
       });
