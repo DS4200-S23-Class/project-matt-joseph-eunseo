@@ -21,15 +21,15 @@ function openTab(evt, tabName) {
 }
 
 // store options from csv file
-const diseases = ['Uveal Melanoma', 'Uterine Corpus Endometrioid Carcinoma', 'Uterine Carcinosarcoma', 'Thyroid Carcinoma', 'Thymoma', 'Testicular Germ Cell Tumor', 'Stomach Adenocarcinoma', 'Skin Cutaneous Melanoma', 'Sarcoma', 'Rectum Adenocarcinoma', 'Prostate Adenocarcinoma', 'Pheochromocytoma & Paraganglioma', 'Pancreatic Adenocarcinoma', 'Ovarian Serous Cystadenocarcinoma', 'Mesothelioma', 'Lung Squamous Cell Carcinoma', 'Lung Adenocarcinoma', 'Liver Hepatocellular Carcinoma', 'Kidney Papillary Cell Carcinoma', 'Kidney Clear Cell Carcinoma', 'Kidney Chromophobe', 'Head & Neck Squamous Cell Carcinoma', 'Glioblastoma Multiforme', 'Esophageal Carcinoma', 'Diffuse Large B-Cell Lymphoma', 'Colon Adenocarcinoma', 'Cholangiocarcinoma', 'Cervical & Endocervical Cancer', 'Breast Invasive Carcinoma', 'Brain Lower Grade Glioma', 'Bladder Urothelial Carcinoma', 'Adrenocortical Cancer', 'Acute Myeloid Leukemia'];
-const tissues = ['Fallopian Tube', 'Kidney', 'Cervix', 'Bladder', 'Prostate', 'Minor Salivary Gland', 'Small Intestine', 'Adrenal Gland', 'Breast', 'Spleen', 'Liver', 'Adipose', 'Stomach', 'Pancreas', 'Ovary', 'Colon', 'Vagina', 'Heart', 'Testis', 'Pituitary', 'Whole Blood', 'Brain', 'Esophagus', 'Nerve', 'Skin', 'Lung', 'Muscle', 'Thyroid', 'Uterus', 'Artery' ];
+const diseases = ["Uveal Melanoma", "Uterine Corpus Endometrioid Carcinoma", "Uterine Carcinosarcoma", "Thyroid Carcinoma", "Thymoma", "Testicular Germ Cell Tumor", "Stomach Adenocarcinoma", "Skin Cutaneous Melanoma", "Sarcoma", "Rectum Adenocarcinoma", "Prostate Adenocarcinoma", "Pheochromocytoma & Paraganglioma", "Pancreatic Adenocarcinoma", "Ovarian Serous Cystadenocarcinoma", "Mesothelioma", "Lung Squamous Cell Carcinoma", "Lung Adenocarcinoma", "Liver Hepatocellular Carcinoma", "Kidney Papillary Cell Carcinoma", "Kidney Clear Cell Carcinoma", "Kidney Chromophobe", "Head & Neck Squamous Cell Carcinoma", "Glioblastoma Multiforme", "Esophageal Carcinoma", "Diffuse Large B-Cell Lymphoma", "Colon Adenocarcinoma", "Cholangiocarcinoma", "Cervical & Endocervical Cancer", "Breast Invasive Carcinoma", "Brain Lower Grade Glioma", "Bladder Urothelial Carcinoma", "Adrenocortical Cancer", "Acute Myeloid Leukemia"];
+const tissues = ["Fallopian Tube", "Kidney", "Cervix", "Bladder", "Prostate", "Minor Salivary Gland", "Small Intestine", "Adrenal Gland", "Breast", "Spleen", "Liver", "Adipose", "Stomach", "Pancreas", "Ovary", "Colon", "Vagina", "Heart", "Testis", "Pituitary", "Whole Blood", "Brain", "Esophagus", "Nerve", "Skin", "Lung", "Muscle", "Thyroid", "Uterus", "Artery" ];
 
 // populate select options
-const selectDisease = document.getElementById('disease');
+const selectDisease = document.getElementById("disease");
 diseases.forEach((disease) => {
   const option = new Option(disease);
-  if (disease === 'Breast Invasive Carcinoma') {
-    option.setAttribute('selected', true);
+  if (disease === "Breast Invasive Carcinoma") {
+    option.setAttribute("selected", true);
   }
   selectDisease.add(option);
 });
@@ -50,11 +50,12 @@ correlationForm.addEventListener("submit", (e) => {
   const gene2 = document.getElementById("gene2").value;
   
   // load data and draw scatterplot
-  d3.csv('data/data.csv', (d) => {
+  d3.csv("data/data.csv", (d) => {
     // coerce data to numbers
     d.x = +d[`${gene1}`];
     d.y = +d[`${gene2}`];
     d.selected = false;
+    d.tissue = d["Disease/Tissue"];
     return d;
   }).then((data) => {
   
@@ -62,9 +63,9 @@ correlationForm.addEventListener("submit", (e) => {
     console.log(data);
     
     // create SVG element
-    const svgScatter = d3.select('#scatterplot')
-      .attr('width', width)
-      .attr('height', height);
+    const svgScatter = d3.select("#scatterplot")
+      .attr("width", width)
+      .attr("height", height);
 
     // remove previous SVG element
     svgScatter.selectAll("*").remove();
@@ -83,81 +84,94 @@ correlationForm.addEventListener("submit", (e) => {
     const yAxis = d3.axisLeft(yScale);
 
     // add axis to SVG
-    svgScatter.append('g')
-      .attr('transform', `translate(${margin.left}, ${innerHeight + margin.top})`)
+    svgScatter.append("g")
+      .attr("transform", `translate(${margin.left}, ${innerHeight + margin.top})`)
       .call(xAxis);
 
-    svgScatter.append('g')
-      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+    svgScatter.append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .call(yAxis);
 
     // add points to scatterplot
-    svgScatter.selectAll('circle')
+    svgScatter.selectAll("circle")
       .data(data)
       .enter()
-      .append('circle')
-      .attr('cx', d => xScale(d.x) + margin.left)
-      .attr('cy', d => yScale(d.y) + margin.top)
-      .attr('r', radius)
-      .attr('fill', d => {
-        if (d.Study === 'GTEX') {
-          return 'green';
-        } else if (d.Study === 'TARGET') {
-          return 'orange';
+      .append("circle")
+      .attr("cx", d => xScale(d.x) + margin.left)
+      .attr("cy", d => yScale(d.y) + margin.top)
+      .attr("r", radius)
+      .attr("fill", d => {
+        if (d.Study === "GTEX") {
+          return "green";
+        } else if (d.Study === "TARGET") {
+          return "orange";
         } else {
-          return 'red'
+          return "red"
         }
       })
-      .attr('stroke', 'white')
-      .attr('stroke-width', 1)
-      .on('mouseover', (event, d) => {
+      .attr("stroke", "white")
+      .attr("stroke-width", 1)
+      .attr("class", "point")
+      .on("mouseover", (event, d) => {
         d3.select(event.currentTarget)
-          .attr('stroke', 'black');
+          .attr("stroke", "black");
         
       })
-      .on('mouseout', (event, d) => {
+      .on("mouseout", (event, d) => {
         d3.select(event.currentTarget)
-          .attr('stroke', 'white');
+          .attr("stroke", "white");
       })
-      .on('click', (event, d) => {
+      .on("click", (event, d) => {
         const point = d3.select(event.currentTarget);
+        const points = d3.selectAll(".point")
+        // reset color of points
+        points.attr("fill", d => {
+          if (d.Study === "GTEX") {
+            return "green";
+          } else if (d.Study === "TARGET") {
+            return "orange";
+          } else {
+            return "red";
+          }
+        });
+
         if (!d.selected) {
-          point.attr('fill', 'blue');
+          point.attr("fill", "blue");
           d.selected = true;
-          d3.select('#selected-point')
-            .text(`Selected point: ${d.Sample}, ${gene1} Expression: ${d.x}, ${gene2} Expression: ${d.y}`);
+
+          // add text for selected point
+          d3.select("#selected-point")
+            .text(`Selected point: ${d.Sample}, ${gene1} expression: ${d.x}, ${gene2} expression: ${d.y}`);
+          d3.select("#highlighted-tissue")
+            .text("");
         } else {
-          point.attr('fill', d => {
-            if (d.Study === 'GTEX') {
-              return 'green';
-            } else if (d.Study === 'TARGET') {
-              return 'orange';
-            } else {
-              return 'red';
-            }
-          });
           d.selected = false;
+
+          // remove text for selected point
+          d3.select("#selected-point")
+            .text("");
         }
+
       });
 
     // add title
-    svgScatter.append('text')
-      .attr('x', width / 2)
-      .attr('y', margin.top / 2)
-      .attr('text-anchor', 'middle')
+    svgScatter.append("text")
+      .attr("x", width / 2)
+      .attr("y", margin.top / 2)
+      .attr("text-anchor", "middle")
       .text(`${gene1} and ${gene2} Expression Correlation`);
     // add x axis title
-    svgScatter.append('text')
-      .attr('x', margin.left + innerWidth / 2)
-      .attr('y', height - 10 )
-      .attr('text-anchor', 'middle')
+    svgScatter.append("text")
+      .attr("x", margin.left + innerWidth / 2)
+      .attr("y", height - 10 )
+      .attr("text-anchor", "middle")
       .text(`${gene1} Expression (log(counts))`);
     // add y axis title
-    svgScatter.append('text')
-      .attr('transform', 'rotate(-90)')
-      .attr('x', -margin.top - innerHeight / 2)
-      .attr('y', margin.left / 2)
-      .attr('text-anchor', 'middle')
+    svgScatter.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -margin.top - innerHeight / 2)
+      .attr("y", margin.left / 2)
+      .attr("text-anchor", "middle")
       .text(`${gene2} Expression (log(counts))`);
   });
 });
@@ -170,10 +184,10 @@ overexpressionForm.addEventListener("submit", (e) => {
   const disease = document.getElementById("disease").value;
 
   // load data and draw scatterplot
-  d3.csv('data/data.csv', (d) => {
+  d3.csv("data/data.csv", (d) => {
     // coerce data to numbers
     d.x = +d[`${gene}`];
-    d.y = d['Disease/Tissue'];
+    d.y = d["Disease/Tissue"];
     return d;
   }).then((data) => {
 
@@ -183,20 +197,20 @@ overexpressionForm.addEventListener("submit", (e) => {
 
     // group data by Disease/Tissue and calculate maximum 
     const groupedData = d3.group(data, d => d.y);
-    console.log(groupedData);
     const averages = Array.from(groupedData, ([key, value]) => {
       return {
-        'y': key,
-        'x': d3.max(value, d => d.x),
-        'selected': false
+        "y": key,
+        "x": d3.max(value, d => d.x),
+        "selected": false,
+        "tissue": key
       };
     });
     averages.pop();
 
     // create SVG element
-    const svgBar = d3.select('#barplot')
-      .attr('width', width)
-      .attr('height', height);
+    const svgBar = d3.select("#barplot")
+      .attr("width", width)
+      .attr("height", height);
     
     // remove previous SVG element
     svgBar.selectAll("*").remove();
@@ -215,59 +229,96 @@ overexpressionForm.addEventListener("submit", (e) => {
     const yAxis = d3.axisLeft(yScale);
 
     // add axes to SVG
-    svgBar.append('g')
-      .attr('transform', `translate(${margin.left}, ${innerHeight + margin.top})`)
+    svgBar.append("g")
+      .attr("transform", `translate(${margin.left}, ${innerHeight + margin.top})`)
       .call(xAxis);
 
-    svgBar.append('g')
-      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+    svgBar.append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .call(yAxis);
     
     // add bars to SVG
-    svgBar.selectAll('rect')
+    svgBar.selectAll("rect")
       .data(averages)
-      .join('rect')
-      .attr('x', margin.left)
-      .attr('y', d => yScale(d.y) + margin.top)
-      .attr('width', d => xScale(d.x))
-      .attr('height', yScale.bandwidth())
-      .attr('fill', d => d.y === disease ? 'red' : 'green')
-      .attr('stroke', '#333')
-      .attr('stroke-width', 1)
-      .attr('opacity', 1)
-      .on('mouseover', (event, d) => {
+      .join("rect")
+      .attr("x", margin.left)
+      .attr("y", d => yScale(d.y) + margin.top)
+      .attr("width", d => xScale(d.x))
+      .attr("height", yScale.bandwidth())
+      .attr("fill", d => d.y === disease ? "red" : "green")
+      .attr("stroke", "#333")
+      .attr("stroke-width", 1)
+      .attr("opacity", 1)
+      .attr("class", "bar")
+      .on("mouseover", (event, d) => {
         d3.select(event.currentTarget)
-          .attr('opacity', 0.7);
+          .attr("opacity", 0.7);
       })
-      .on('mouseout', (event, d) => {
+      .on("mouseout", (event, d) => {
         d3.select(event.currentTarget)
-          .attr('opacity', 1);
+          .attr("opacity", 1);
       })
-      .on('click', (event, d) => {
+      .on("click", (event, d) => {
+        // get data
+        const bars = d3.selectAll(".bar");
         const bar = d3.select(event.currentTarget);
+        const tissue = d.tissue;
+        const points = d3.selectAll(".point");
+
+        // reset current color of points and bars
+        points.attr("fill", d => {
+          if (d.Study === "GTEX") {
+            return "green";
+          } else if (d.Study === "TARGET") {
+            return "orange";
+          } else {
+            return "red";
+          }
+        })
+        bars.attr("fill", d => d.y === disease ? "red" : "green");
+
         if (!d.selected) {
-          bar.attr('fill', 'blue');
+          bar.attr("fill", "black");
           d.selected = true;
-          d3.select('#selected-bar')
-            .text(`Selected bar: ${d.y}, ${gene} max expression: ${d.x}`);
+          d3.select("#selected-bar")
+            .text(`Selected bar: ${tissue.toLowerCase()}, ${gene} max expression: ${d.x}`);
+
+          // make black the points with tisue that match selected
+          // tissue in bar plot
+          const selectedPoints = points.filter(d => d.tissue === tissue)
+          selectedPoints.attr("fill", "black");
+          
+          // add text on scatterplot to indicate which tissue is highlighted
+          if(points.size() > 0) {
+          d3.select("#highlighted-tissue")
+            .text(`Highlighted tissue: ${tissue.toLowerCase()}, # points highlighted: ${selectedPoints.size()} `);
+          d3.select("#selected-point")
+            .text("")
+          }
         } else {
-          bar.attr('fill', d => d.y === disease ? 'red' : 'green');
           d.selected = false;
-        }
+
+          // remove text on scatterplot and barplot
+          d3.select("#highlighted-tissue")
+            .text("");
+          d3.select("#selected-bar")
+            .text("");
+        }    
       });
 
     // add title
-    svgBar.append('text')
-      .attr('x', width / 2)
-      .attr('y', margin.top / 2)
-      .attr('text-anchor', 'middle')
+    svgBar.append("text")
+      .attr("x", width / 2)
+      .attr("y", margin.top / 2)
+      .attr("text-anchor", "middle")
       .text(`${gene} Expression Across Normal and Tumor Tissue Types`);
     
     // add x axis title
-    svgBar.append('text')
-      .attr('x', margin.left + innerWidth / 2)
-      .attr('y', height - 10 )
-      .attr('text-anchor', 'middle')
+    svgBar.append("text")
+      .attr("x", margin.left + innerWidth / 2)
+      .attr("y", height - 10 )
+      .attr("text-anchor", "middle")
       .text(`${gene} Expression (log(counts))`);
   });
 });
+
